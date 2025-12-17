@@ -12,6 +12,9 @@
 #include <windef.h>
 #include <stdlib.h>
 
+#include <dontuse.h>
+#include <suppress.h>
+
 #define HIDE_PROC                               CTL_CODE(FILE_DEVICE_UNKNOWN, 0x45,  METHOD_BUFFERED, FILE_ANY_ACCESS)
 #define PRIVILEGE_ELEVATION                     CTL_CODE(FILE_DEVICE_UNKNOWN, 0x90,  METHOD_BUFFERED, FILE_ANY_ACCESS)
 #define PROTECTION_LEVEL_SYSTEM                 CTL_CODE(FILE_DEVICE_UNKNOWN, 0x91,  METHOD_BUFFERED, FILE_ANY_ACCESS)
@@ -154,16 +157,6 @@ BOOL MDLReadMemory(int pid,
     SIZE_T size,
     BYTE* buffer);
 
-ULONG64 GetPhysicalAddress(ULONG64 TargetVAddr, ULONG64 DirBase);
-NTSTATUS ReadPhysicalMemory(HANDLE TargetPid, PVOID TargetAddress, SIZE_T READ_SIZE, PVOID Data);
-PVOID MapPhysicalPage(ULONG64 PhysicalAddress, SIZE_T Size);
-VOID UnmapPhysicalPage(PVOID MappedAddress, SIZE_T Size);
 
-NTSTATUS ReadVirtualMemory_Official(
-    _In_ HANDLE TargetPid,
-    _In_ PVOID TargetAddress,
-    _In_ SIZE_T ReadSize,
-    _Out_ PVOID OutputBuffer
-);
 NTSTATUS KeReadProcessMemory(HANDLE PID, PVOID SourceAddress, PVOID TargetAddress, SIZE_T Size);
 #endif

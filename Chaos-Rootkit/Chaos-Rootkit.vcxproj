@@ -92,7 +92,7 @@
       <TreatWarningAsError>false</TreatWarningAsError>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>ZwSwapCert.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ZwSwapCert.lib;FltMgr.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <TreatLinkerWarningAsErrors>false</TreatLinkerWarningAsErrors>
     </Link>
   </ItemDefinitionGroup>
